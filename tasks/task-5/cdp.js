@@ -8,51 +8,57 @@ import CDP from "chrome-remote-interface";
 const app = express();
 const expected = "Infrastructure";
 const template = fs.readFileSync(
-  path.resolve(import.meta.dirname, "./index.html"),
-  "utf-8"
+    path.resolve(import.meta.dirname, "./index.html"),
+    "utf-8"
 );
 
 app.get("/", (req, res) => {
-  res.type("html");
-  res.send(template);
+    res.type("html");
+    res.send(template);
 });
 
 // Запускаем сервер который отдает на localhost:3000 html - ./index.html
 app.listen(3000, () => {
-  console.log("Server listen on port 3000");
-  test();
+    console.log("Server listen on port 3000");
+    test();
 });
 
 async function test() {
-  let client;
+    let client;
 
-  try {
-    client = await CDP();
-    console.log("Successfully connected to chrome!");
+    try {
+        client = await CDP();
+        console.log("Successfully connected to chrome!");
 
-    const { Network, Page, DOM, Runtime } = client;
+        const {Network, Page, DOM, Runtime} = client;
 
-    // Включаем Network, Page и Runtime
-    await Network.enable();
-    await Page.enable();
-    await Runtime.enable();
+        // Включаем Network, Page и Runtime
+        await Network.enable();
+        await Page.enable();
+        await Runtime.enable();
 
-    // Нужно перейти на localhost:3000, дождаться инициализации DOM и вызвать нужные команды
-    await Page.navigate({ url: "http://localhost:3000" });
-    await Page.loadEventFired();
-    await DOM.enable();
+        // Нужно перейти на localhost:3000, дождаться инициализации DOM и вызвать нужные команды
+        await Page.navigate({url: "http://localhost:3000"});
+        await Page.loadEventFired();
+        await DOM.enable();
 
-    // Здесь нужно получить содержимое элемента #root
-    const result = '???';
+        const { root } = await DOM.getDocument();
+        const { nodeId } = await DOM.querySelector({
+            nodeId: root.nodeId,
+            selector: "#root",
+        });
+        const { outerHTML } = await DOM.getOuterHTML({ nodeId });
+        // если нужен только текст
+        const result = outerHTML.replace(/<[^>]+>/g, "").trim();
 
-    assert.equal(result, expected);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (client) {
-      await client.close();
+        assert.equal(result, expected);
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (client) {
+            await client.close();
+        }
+
+        process.exit(0);
     }
-
-    process.exit(0);
-  }
 }
