@@ -1394,6 +1394,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"task-11@workspace:tasks/task-11":
+  version: 0.0.0-use.local
+  resolution: "task-11@workspace:tasks/task-11"
+  dependencies:
+    express: "npm:^5.2.1"
+  languageName: unknown
+  linkType: soft
+
 "task-1@workspace:tasks/task-1":
   version: 0.0.0-use.local
   resolution: "task-1@workspace:tasks/task-1"

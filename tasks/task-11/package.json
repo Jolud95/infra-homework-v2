@@ -1,0 +1,15 @@
+{
+  "name": "task-11",
+  "version": "1.0.0",
+  "description": "Ваша задача установить докер и запустить контейнер.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
