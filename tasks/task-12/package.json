@@ -1,0 +1,15 @@
+{
+  "name": "task-12",
+  "version": "1.0.0",
+  "description": "Необходимо запустить докер контейнер внутри которого будет запущена нода с `server.js`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

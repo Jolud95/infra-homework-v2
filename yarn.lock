@@ -1402,6 +1402,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"task-12@workspace:tasks/task-12":
+  version: 0.0.0-use.local
+  resolution: "task-12@workspace:tasks/task-12"
+  dependencies:
+    express: "npm:^5.2.1"
+  languageName: unknown
+  linkType: soft
+
 "task-1@workspace:tasks/task-1":
   version: 0.0.0-use.local
   resolution: "task-1@workspace:tasks/task-1"
