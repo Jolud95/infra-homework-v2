@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+    name: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+      name: server
+  template:
+    metadata:
+      labels:
+        app: server
+        name: server
+    spec:
+      containers:
+        - name: server
+          image: kholstinevich/server
+          ports:
+            - containerPort: 3000
