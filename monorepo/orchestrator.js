@@ -3,7 +3,7 @@ import path from "node:path";
 import { exec } from "node:child_process";
 
 const ROOT_DIR = process.cwd();
-const SCRIPT_NAME = 'build';
+const SCRIPT_NAME = process.argv.slice(2);
 
 /**
  * Находим проекты из workspaces
