@@ -1,0 +1,107 @@
+workflow:
+  rules:
+    - changes:
+        - "**/*.md"
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # - if: '$CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+
+stages:
+  # - install
+  # - lint
+  - build
+  # - test
+  - upload
+  # - deploy
+
+# .default_node:
+#   image: node:24
+#   cache:
+#     - key:
+#         prefix: node-modules
+#         files:
+#           - yarn.lock
+#       paths:
+#         - node_modules/
+#       policy: pull
+
+# install:
+#   stage: install
+#   image: node:24
+#   cache:
+#     - key:
+#         prefix: node-modules
+#         files:
+#           - package.json
+#           - yarn.lock
+#       paths:
+#         - node_modules/
+#       policy: pull-push
+
+#     - key:
+#         prefix: yarn-cache
+#         files:
+#           - yarn.lock
+#       paths:
+#         - .yarn/cache/
+#       policy: pull-push
+#   script:
+#     - yarn install --immutable
+
+# lint:
+#   stage: lint
+#   extends: .default_node
+#   needs: ["install"]
+#   script:
+#     - yarn install
+#     - yarn lint
+
+# build:
+#   stage: build
+#   extends: .default_node
+#   needs: ["install"]
+#   script:
+#     - yarn build
+
+# test_node_22:
+#   stage: test
+#   extends: .default_node
+#   image: node:22
+#   script:
+#     - yarn test
+
+# test_node_24:
+#   stage: test
+#   extends: .default_node
+#   script:
+#     - yarn test
+
+# deploy:
+#   stage: deploy
+#   extends: .default_node
+#   script:
+#     - echo "Deploying application..."
+#   when: manual
+
+build_assets:
+  stage: build
+  image: node:24
+  script:
+    - yarn install
+    - yarn build:assets
+  artifacts:
+    paths:
+      - ./tasks/task-17/dist
+
+s3_upload:
+  stage: upload
+  image: amazon/aws-cli
+  variables:
+    AWS_DEFAULT_REGION: ru-central1
+    S3_ENDPOINT: "https://storage.yandexcloud.net"
+    S3_BUCKET: "infra-2"
+  needs: ["build_assets"]
+  script:
+    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+    - aws s3 sync ./tasks/task-17/dist s3://$S3_BUCKET/$GITLAB_USER_LOGIN/ --endpoint-url "$S3_ENDPOINT"
